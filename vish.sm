@@ -1,0 +1,714 @@
+vish
+	data "cdm_gauss/vishniac.out"
+	read {lcdm 1 clcdm 2}
+	set lcdm=lg(lcdm) set clcdm=lg(clcdm)
+	data "model1_gauss/vishniac.out"
+	read {l1_g 1 cl1_g 2}
+	set l1_g=lg(l1_g) set cl1_g=lg(cl1_g)
+	data "model1/vishniac.out"
+	read {l1 1 cl1 2}
+	set l1=lg(l1) set cl1=lg(cl1)
+	data "cdm_noreio1/vishniac.out"
+	read {lcdm_1 1 clcdm_1 2}
+	set lcdm_1=lg(lcdm_1) set clcdm_1=lg(clcdm_1)
+	
+	# limits l1 cl1 
+	limits 1 6 -13 -8
+	ctype default box
+	ctype red connect l1 cl1
+	ctype green connect lcdm clcdm
+	ctype cyan connect l1_g cl1_g
+	ctype blue connect lcdm_1 clcdm_1
+
+vish2
+	data "cdm_gauss/vishniac.out"
+	read {lcdm 1 clcdm 2}
+	set lcdm=lg(lcdm) set clcdm=lg(clcdm)
+	data "model3/vishniac.out"
+	read {l3 1 cl3 2}
+	set l3=lg(l3) set cl3=lg(cl3)
+	data "model1_gauss/vishniac.out"
+	read {l1_g 1 cl1_g 2}
+	set l1_g=lg(l1_g) set cl1_g=lg(cl1_g)
+	data "model4/vishniac.out"
+	read {l4 1 cl4 2}
+	set l4=lg(l4) set cl4=lg(cl4)
+	data "model0_open/vishniac.out"
+	read {l0 1 cl0 2}
+	set l0=lg(l0) set cl0=lg(cl0)
+	
+	# limits l1 cl1 
+	limits 1 6 -13 -8
+	ctype default box
+	ctype green connect l3 cl3
+	ctype red connect l4 cl4
+	ctype cyan connect lcdm clcdm
+	ctype magenta connect l0 cl0
+	ctype default connect l1_g cl1_g
+
+
+getvish 2
+	data $2	
+	read {l 1 cl 2}
+	define ll "l$!1"
+	define cc "cl$!1"
+	if ($?bias) {set cl=($bias*cl)}
+	set $ll=lg(l) set $cc=(lg(1.e-30+cl/2.0/PI))
+	#set $ll=(l) set $cc=((cl/2.0/PI))
+	if ($?ellcut) { set $cc=$cc if ($ll<$ellcut) set $ll=$ll if ($ll<$ellcut) }
+
+getvis 3
+	data $2
+	lines 2 $($3+10)
+	read {z 1 tau 3 g 4}
+	define zz "z$!1"
+	define gg "g$!1"
+	define tt "t$!1"
+	set $zz=lg(z+1.0) #set $zz=z
+	set $gg=g #set $gg=exp(g)
+	 set $tt=tau
+
+
+getS 2
+	data $2
+	read {k 1 S 2 Si 3 Sa 4}
+	define kk "k$!1"
+	define SS "S$!1"
+	define SSi "Si$!1"
+	define SSa "Sa$!1"
+
+	set $SS=(k*k*S) set $SSi=(k*k*Si) set $SSa=(k*k*Sa)
+	set $SS=(k*k*S) set $SSi=(k*k*Si) set $SSa=(k*k*Sa)
+	set $kk=lg(k) 
+	#set $SS=exp(S) set $SSi=exp(Si) set $SSa=exp(Sa)
+
+
+readmod 2
+	#	define muK2 $(2.7*2.7*1e12)
+		define muK2 1
+		data $1
+		read { ell 1 xTT 2 xEE 3 xTE 4 }
+		define 3 TT"$!2"
+		define 4 EE"$!2"
+		define 5 TE"$!2"
+		set $3=xTT*$muK2
+		set $4=xEE*$muK2
+		set $5=xTE*$muK2
+		set lell=lg(ell)
+		
+wmap
+		lweight 3
+		define dir "models_WMAP/"	
+		getvish 20 "$!dir""WMAP20_0.3,0.7,0.72,0.93,0.020,20,1.0,0.0/vishniac.out"
+		getvish 6 "$!dir""WMAP6_0.3,0.7,0.72,0.93,0.020,6,1.0,0.0/vishniac.out"		
+		getvish 206 "$!dir""WMAP_20_6_0.3,0.7,0.72,0.93,0.020,20,1.0,0.0/vishniac.out"
+
+		readmod "models/cmb_zri17.fcl" 17
+		readmod "models/cmb_zri6.fcl" 6
+		set lTT17=lg(TT17)
+		set lTT6=lg(TT6)
+		
+		ticksize -1 10 -1 10 limits 0 6 -16 -8
+		ctype default lweight 2 expand 1.01
+		box expand 1.5
+		define TeX_strings 1
+		xlabel {\sc l}
+		ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+		lweight 3
+		ctype default connect l6 cl6 relocate 1.1 -12.5 putlabel 9 "z=6"
+		connect lell lTT6
+		ctype red connect l20 cl20 relocate 1.1 -13.0 putlabel 9 "z=20"
+		connect lell lTT17
+		ctype green connect l206 cl206 relocate 1.1 -13.5 putlabel 9 "x=20--6"
+
+		
+wmap2
+		lweight 3
+		define dir "models_WMAP/"	
+		getvish 20 "$!dir""WMAP20_0.3,0.7,0.72,0.93,0.020,20,1.0,0.0/vishniac.out"
+		getvish 6 "$!dir""WMAP6_0.3,0.7,0.72,0.93,0.020,6,1.0,0.0/vishniac.out"		
+		getvish 206 "$!dir""WMAP_20_6_0.3,0.7,0.72,0.93,0.020,20,1.0,0.0/vishniac.out"
+
+
+		define lcut $(lg(4300))
+		readmod "models/cmb_zri17.fcl" 17
+		readmod "models/cmb_zri6.fcl" 6
+		set lTT17=lg(TT17) if (lell<$lcut)
+		set lTT6=lg(TT6) if (lell<$lcut)
+		set lell=lell  if (lell<$lcut)
+		
+		set cl6=cl6 if (l6>$lcut)
+		set cl20=cl20 if (l20>$lcut)
+		set l6=l6 if (l6>$lcut)
+		set l20=l20 if (l20>$lcut)
+		set l6= l6 concat lell
+		set l20= l20 concat lell
+		set cl6 = cl6 concat lTT6
+		set cl20 = cl20 concat lTT17
+
+		sort { l6 cl6 }
+		sort { l20 cl20 }
+		
+		ticksize -1 10 -1 10 limits $(lg(2)) 5 -14.5 -9
+		ctype default lweight 2 expand 1.01
+		box expand 1.5
+		define TeX_strings 1
+		xlabel {\sc l}
+		ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+		lweight 3
+		ctype default connect l6 cl6 relocate 1.1 -12.5 putlabel 9 "z=6 (\tau=0.02)"
+		ctype red connect l20 cl20 relocate 1.1 -13.0 putlabel 9 "z=20 (\tau=0.17)"
+	#	ctype green connect l206 cl206 relocate 1.1 -13.5 putlabel 9 "x=20--6"
+
+		
+
+vr
+	define mod "0.3,0.7,0.7,1,0.0196,20,1,0.0/vishniac.out"
+	define dir "models_reion/"
+	define dirg "models_reion_gauss/"
+	getvish	0 "$!dir""gnedin_""$!mod"
+	getvish S "$!dir""gnedin_slice_""$!mod"
+	getvish	a "$!dir""gnedin_approx_0.3,0.7,0.7,1,0.0196,7,1,0.0/vishniac.out"
+	getvish	a2 "$!dirg""gnedin_approx_0.3,0.7,0.7,1,0.0196,7,1,0.0/vishniac.out"
+	getvish 1 "$!dir""gnedin_Wk_""$!mod"
+	getvish 2 "$!dir""gnedin_Wk-1_""$!mod"
+	set cldel=lg(10**cl0-10**cl1) set ldel=l1
+
+	getvish WS "$!dir""gnedin_WSkp_""$!mod"
+	getvish WS1 "$!dir""gnedin_WSkp-1_""$!mod"
+	getvish Sm "$!dir""gnedin_Skpcut_m_""$!mod"
+	getvish Sp "$!dir""gnedin_Skpcut_p_""$!mod"
+
+	ticksize -1 10 -1 10 limits 1 6 -20 -12
+	ctype default lweight 2 expand 1.01
+	box expand 1.5
+	define TeX_strings 1
+	xlabel {\sc l}
+	ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+	lweight 3
+		ltype 2
+	#ctype blue connect la cla relocate 1.5 -15 putlabel 9 "full P(k), approx \tau(z)"
+	#ctype green connect la2 cla2 relocate 1.5 -15.5 putlabel 9 "full P(k), approx \tau(z), gaussian"
+	ctype default connect l0 cl0 relocate 1.5 -16.0 putlabel 9 "full P(k)"
+	ctype red     connect l1 cl1 relocate 1.5 -16.5 putlabel 9 "W^2(k) P(k)"
+	ctype green  connect l2 cl2 relocate 1.5 -17.0 putlabel 9 "[1-W^2(k)] P(k)"
+	#ctype cyan connect ldel cldel relocate 1.5 -17.5 putlabel 9 "full - W^2"
+	ctype blue    connect lS  clS  relocate 1.5 -17.5 putlabel 9 "z>6.75"
+
+	ltype 1
+	ctype red     connect lWS  clWS  relocate 1.5 -18.0 putlabel 9 "W^2 S(k)"
+	ctype green   connect lWS1 clWS1 relocate 1.5 -18.5 putlabel 9 "[1-W^2(k)] S(k)"
+	ctype cyan    connect lSp clSp relocate 1.5 -19.0 putlabel 9 "S(k<k_{cut})"
+	ctype magenta connect lSm clSm relocate 1.5 -19.5 putlabel 9 "S(k>k_{cut})"
+	ltype 0	ctype default lweight 0 ticksize 0 0 0 0	
+
+vish_misc
+	getvish 0 "models/0_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish 1 "models/1_1,0,0.5,1,0.0125,19,0.0,0.1/vishniac.out"
+	getvish 2 "models/2_1,0,0.5,1,0.0125,56,0.0,0.1/vishniac.out"
+	getvish 3 "models/3_1,0,0.5,1,0.0125,56,0.0,0.5/vishniac.out"
+	getvish 4 "models/4_1,0,0.5,1,0.0125,166,0.0,0.5/vishniac.out"
+
+	getvish 17 "models/17_0.4,0,0.7,1,0.0125,19,0.0,0.1/vishniac.out"
+	getvish 18 "models/18_0.4,0,0.7,1,0.0125,54,0.0,0.1/vishniac.out"
+	getvish 19 "models/19_0.4,0,0.7,1,0.0125,54,0.0,0.5/vishniac.out"
+	getvish 20 "models/20_0.4,0,0.7,1,0.0125,156,0.0,0.5/vishniac.out"
+	
+	ticksize -1 10 -1 10
+	limits 1 6 -14 -3
+	ctype default
+	lweight 2 expand 1.01
+	box 
+	expand 1.5
+	define TeX_strings 1
+	xlabel {\sc l}
+	ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+	lweight 3
+	ctype default connect l0 cl0
+	ctype red     connect l1 cl1
+	ctype green   connect l2 cl2
+	ctype cyan    connect l3 cl3
+	ctype magenta connect l4 cl4
+	ltype 2
+	ctype red     connect l17 cl17
+	ctype green   connect l18 cl18
+	ctype cyan    connect l19 cl19
+	ctype magenta connect l20 cl20
+	ltype 0	ctype default lweight 0 ticksize 0 0 0 0
+
+conlab 4
+	connect $1 $2
+	define d (dimen($1)-1)
+	define x $($1[$d])
+	define y $($2[$d])
+	relocate $x $y
+	define lweight | 
+	lweight 2
+	putlabel $3 $4
+	lweight $lweight define lweight delete
+
+vish_ff
+	define doPatchy DELETE
+	#define doPatchy 1
+	define doOpen DELETE
+	# define doOpen 1
+
+	#window 1 1 1 1
+	LOCATION  $($gx1 + 1000) $gx2 $gy1 $gy2
+	define ellcut 5
+	getvish 0 "models/0_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish 1 "models/1_1,0,0.5,1,0.0125,19,0.0,0.1/vishniac.out"
+	getvish 2 "models/2_1,0,0.5,1,0.0125,56,0.0,0.1/vishniac.out"
+	getvish 3 "models/3_1,0,0.5,1,0.0125,56,0.0,0.5/vishniac.out"
+	getvish 4 "models/4_1,0,0.5,1,0.0125,166,0.0,0.5/vishniac.out"
+
+	getvish P0 "models_patchy/0_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish P "models_patchy/P_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_0.001,10.0,3.0/vishniac.out"
+	getvish P1 "models_patchy/P1_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_20.0,10.0,3.0/vishniac.out"
+	getvish Pd "models_patchy/Pd_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_0.001,10.0,3.0/vishniac.out"
+	getvish Pd1 "models_patchy/Pd_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_20.0,10.0,3.0/vishniac.out"
+
+	getvish B1 "models_openfix/B1_0.3,0,0.7,1,0.05,0,1.0,0.1/vishniac.out"
+	getvish B2 "models_openfix/B2_0.3,0,0.7,1,0.05,0,0.2,0.1/vishniac.out"
+	getvish B3 "models_openfix/B3_0.3,0,0.7,1,0.05,0,1.0,0.5/vishniac.out"
+	getvish B4 "models_openfix/B4_0.3,0,0.7,1,0.05,0,0.2,0.5/vishniac.out"
+
+	# normalize to cluster abundance
+	define s8dmr 0.30
+	define Om0 0.3
+	define s8clus (0.60*($Om0**(-0.53)))
+	define fac (($s8clus/$s8dmr)**4.0)
+	echo normalization factor=$!fac
+	set clB1=clB1+lg($fac)
+	set clB2=clB2+lg($fac)
+	set clB3=clB3+lg($fac)
+	set clB4=clB4+lg($fac)
+
+	if ($?doOpen) {
+	getvish 17 "models_openfix/17_0.4,0,0.7,1,0.0125,19,0.0,0.1/vishniac.out"
+	getvish 18 "models_openfix/18_0.4,0,0.7,1,0.0125,54,0.0,0.1/vishniac.out"
+	getvish 19 "models_openfix/19_0.4,0,0.7,1,0.0125,54,0.0,0.5/vishniac.out"
+	getvish 20 "models_openfix/20_0.4,0,0.7,1,0.0125,156,0.0,0.5/vishniac.out"
+	}
+	ticksize -1 10 -1 10
+	define l2 $($ellcut + 1.1)
+	limits 1 $l2 -15 -9
+	if ($?doPatchy) {limits 1 $l2 -18 -9}
+	ctype default
+	lweight 2 expand 1.5
+	box 
+	expand 1.5
+	define TeX_strings 1
+	xlabel {\sc l}
+	ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+	lweight 3
+	expand 1.3
+	                           #   x_e  z_r  tau_r
+	ctype default conlab l0 cl0 9 "1     5 0.02"
+	ctype red     conlab l1 cl1 6 "1    19 0.1"
+	ctype green   conlab l2 cl2 3 "0.2  56 0.1"
+	ctype magenta conlab l4 cl4 9 "0.2 166 0.5"
+	ctype blue    conlab l3 cl3 9 "1    56 0.5"
+	ltype 2
+	ctype red     conlab lB1 clB1 9 "1     7 0.1"
+	# ctype green   conlab lB2 clB2 9 "0.2  20 0.1"
+	# ctype magenta conlab lB4 clB4 3 "0.2  57 0.5"
+	ctype blue    conlab lB3 clB3 3 "1    20 0.5"
+
+	ltype 0
+	relocate $x -10.4
+	# lweight 1 putlabel 6 "(\Omega_Bh^2=0.05)"
+	lweight 3 ctype default
+	relocate $x -11
+	lweight 2 putlabel 6 "{x_e   z_r   \tau_r}"
+	lweight 3
+	ltype 1
+	if ($?doOpen) {
+	ctype red     connect l17 cl17
+	ctype green   connect l19 cl18
+	ctype blue    connect l19 cl19
+	ctype magenta connect l20 cl20
+	}
+	
+	if ( $?doPatchy == 1 ) {
+	ltype 4
+	ctype green connect lP1 clP1
+	#ctype magenta connect lPd clPd
+	ctype cyan connect lP0 clP0
+	ctype red connect lP clP
+	ctype blue connect lPd1 clPd1
+	ltype 0
+	}
+	data stdCDM.Cl
+	read {l 1 ccl 2}
+	ctype default
+	ion l ccl ccl_01 0.1
+	ion l ccl ccl_05 0.5
+	ion l ccl ccl_1 1
+	ion l ccl ccl_2 2
+	connect (lg(l)) (lg(ccl))
+	connect (lg(l)) (lg(ccl_01))
+	connect (lg(l)) (lg(ccl_05))
+	connect (lg(l)) (lg(ccl_1))
+	connect (lg(l)) (lg(ccl_2))
+
+	ltype 0	ctype default lweight 0 ticksize 0 0 0 0
+	LOCATION 3500 31000 3500 31000
+	define doOpen delete
+
+
+vish_p
+	#window 1 1 1 1
+	LOCATION  $($gx1 + 1000) $gx2 $gy1 $gy2
+	define ellcut 5
+	define bbias 5.0
+	
+	define bias ($bbias*$bbias)
+	getvish P "models_patchy/P_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_0.001,10.0,3.0/vishniac.out"
+	getvish P0 "models_patchy/0_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish P1 "models_patchy/P1_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_20.0,10.0,3.0/vishniac.out"
+	getvish P2 "models_patchy/P2_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_1.0,10.0,3.0/vishniac.out"
+	getvish P3 "models_patchy/P3_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_0.001,10.0,10.0/vishniac.out"
+	getvish P4 "models_patchy/P4_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_20.0,10.0,10.0/vishniac.out"
+	getvish P5 "models_patchy/P5_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_1.0,10.0,10.0/vishniac.out"
+	getvish P6  "models_patchy/P6_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_1.0,5.0,1.0/vishniac.out"
+	getvish P7  "models_patchy/P7_1,0,0.5,1,0.0125,5,1.0,0.0,XeXe_1.0,20.0,5.0/vishniac.out"
+	define bias ($bbias)
+	getvish Pd "models_patchy/Pd_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_0.001,10.0,3.0/vishniac.out"
+	getvish Pd1 "models_patchy/Pd1_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_20.0,10.0,3.0/vishniac.out"
+	getvish Pd2 "models_patchy/Pd2_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_1.0,10.0,3.0/vishniac.out"
+	getvish Pd3 "models_patchy/Pd3_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_0.001,10.0,10.0/vishniac.out"
+	getvish Pd4 "models_patchy/Pd4_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_20.0,10.0,10.0/vishniac.out"
+	getvish Pd5 "models_patchy/Pd5_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_1.0,10.0,10.0/vishniac.out"
+	getvish Pd6 "models_patchy/Pd6_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_1.0,5.0,1.0/vishniac.out"
+	getvish Pd7 "models_patchy/Pd7_1,0,0.5,1,0.0125,5,1.0,0.0,Xed_1.0,20.0,5.0/vishniac.out"
+	define bias DELETE
+	getvish Pv "models_patchy/Pv_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv1 "models_patchy/Pv1_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv2 "models_patchy/Pv2_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv3 "models_patchy/Pv3_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv4 "models_patchy/Pv4_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv5 "models_patchy/Pv5_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv6 "models_patchy/Pv6_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish Pv7 "models_patchy/Pv7_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+
+	ticksize -1 10 -1 10
+	define l2 $($ellcut + 1.1)
+	limits 1 $l2 -15 -9
+	if ($?doPatchy) {limits 1 $l2 -18 -9}
+	ctype default
+	lweight 2 expand 1.5
+	box 
+	expand 1.5
+	define TeX_strings 1
+	xlabel {\sc l}
+	ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+	lweight 3
+	expand 1.3
+	if ( $?doVish ) {
+	                           #   x_e  z_r  tau_r
+	ctype default conlab l0 cl0 9 "1     5 0.02"
+	ctype red     conlab l1 cl1 6 "1    19 0.1"
+	ctype green   conlab l2 cl2 3 "0.2  56 0.1"
+	ctype magenta conlab l4 cl4 9 "0.2 166 0.5"
+	ctype blue    conlab l3 cl3 9 "1    56 0.5"
+	ltype 2
+	ctype red     conlab lB1 clB1 9 "1     7 0.1"
+	# ctype green   conlab lB2 clB2 9 "0.2  20 0.1"
+	# ctype magenta conlab lB4 clB4 3 "0.2  57 0.5"
+	ctype blue    conlab lB3 clB3 3 "1    20 0.5"
+	}
+	ltype 0
+	relocate $x -10.4
+	# lweight 1 putlabel 6 "(\Omega_Bh^2=0.05)"
+	lweight 3 ctype default
+	relocate $x -11
+	lweight 2 putlabel 6 "{x_e   z_r   \tau_r}"
+	lweight 3
+
+	#ctype default connect lP0 clP0
+	ltype 0
+	ctype red connect lPv clPv
+	#ctype green connect lPv1 clPv1
+	#ctype blue connect lPv2 clPv2
+	ctype cyan connect lPv3 clPv3
+	#ctype magenta connect lPv4 clPv4
+	#ctype yellow connect lPv5 clPv5
+	ctype default connect lPv6 clPv6
+	ctype green connect lPv7 clPv7
+	ltype 2
+	ctype red connect lP clP
+	ctype green connect lP1 clP1
+	ctype blue connect lP2 clP2
+	ctype cyan connect lP3 clP3
+	ctype magenta connect lP4 clP4
+	ctype yellow connect lP5 clP5
+	ctype default connect lP6 clP6
+	ctype green connect lP7 clP7
+	ltype 4
+	ctype red connect lPd clPd
+	ctype green connect lPd1 clPd1
+	ctype blue connect lPd2 clPd2
+	ctype cyan connect lPd3 clPd3
+	ctype magenta connect lPd4 clPd4
+	ctype yellow connect lPd5 clPd5
+	ctype default connect lPd6 clPd6
+	ctype green connect lPd7 clPd7
+	ltype 0
+
+	data stdCDM.Cl
+	read {l 1 ccl 2}
+	ctype default
+	ion l ccl ccl_01 0.1
+	ion l ccl ccl_05 0.5
+	ion l ccl ccl_1 1
+	ion l ccl ccl_2 2
+	connect (lg(l)) (lg(ccl))
+	connect (lg(l)) (lg(ccl_01))
+	connect (lg(l)) (lg(ccl_05))
+	connect (lg(l)) (lg(ccl_1))
+	connect (lg(l)) (lg(ccl_2))
+
+	ltype 0	ctype default lweight 0 ticksize 0 0 0 0
+	LOCATION 3500 31000 3500 31000
+	define doOpen DELETE
+
+ion 4
+	# l cl_in cl_out tau
+	set l2_10=0.01*$1*$1  # (l/10)^2
+	set $3=(1.0 + l2_10/(1.0+l2_10)*(exp(-2.0*$4)-1.0))*$2
+	#set $3=exp(-2.0*$4)*$2
+
+paper
+	device postencap  vish_Cl.eps
+	vish_ff
+	device postencap Sapprox.eps
+	vish_approx
+	device X11
+
+vish_approx
+	getvish 1          "models/1_1,0,0.5,1,0.0125,19,0.0,0.1/vishniac.out"
+	getvish 1a "models_Sapprox/1_1,0,0.5,1,0.0125,19,0.0,0.1/vishniac.out"
+
+	getS 1a    "models_Sapprox/1_1,0,0.5,1,0.0125,19,0.0,0.1/S.out"
+
+	# set cl1a=(cl1a-lg(16.0*PI*PI))    # kludge for bad normalization
+
+	ticksize -1 10 -1 10
+	LOCATION 3500 31000 3500 31000
+	LOCATION  $($gx1 + 1500) $gx2 3500 15000
+	lweight 3
+	#window 1 2 1 1
+	set r=cl1-cl1a
+	#limits l1 r
+	#connect l1 r
+	ctype green
+	limits l1 cl1
+	connect l1 cl1
+	ctype red ltype 2
+	# limits l1a cl1a
+	connect l1 cl1a
+	ctype default
+	lweight 2 expand 1.5 ltype 0
+	box 
+	expand 1.5
+	define TeX_strings 1
+	xlabel {\sc l}
+	ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+	lweight 3
+	expand 1.3
+
+	#window 1 2 1 2
+	LOCATION 3500 31000 3500 31000
+	LOCATION  $($gx1 + 1500) $gx2 19500 31000
+	limits -3 5 S1a
+	ticksize -1 10 0 0
+	ltype 0 ctype green connect k1a S1a
+	#limits k1a Sa1a
+	ltype 2 ctype red connect k1a Sa1a
+	#limits k1a Si1a
+	#ltype 3 ctype blue connect k1a Si1a
+	lweight 2 expand 1.5 ctype default ltype 0
+	box
+	expand 1.5
+	xlabel k [Mpc/h]
+	ylabel k^2 S(k)
+	LOCATION 3500 31000 3500 31000
+
+
+
+vis_paper
+	LOCATION  $($gx1 + 800) $gx2 $gy1 $gy2
+	getvis 1 "models/1_1,0,0.5,1,0.0125,19,0.0,0.1/tau.out" 250 #19
+	getvis 2 "models/2_1,0,0.5,1,0.0125,56,0.0,0.1/tau.out" 250 # 56
+	getvis 3 "models/3_1,0,0.5,1,0.0125,56,0.0,0.5/tau.out" 250 # 56
+	getvis 4 "models/4_1,0,0.5,1,0.0125,166,0.0,0.5/tau.out"  250 #166
+	define TeX_strings 1
+
+	ticksize -1 10 -100 100
+	wind 1 -2 1 2
+	limits z4 g4
+	ctype default expand 1.4
+	lweight 2 bo
+	ylabel visibility g(z)
+	lweight 3
+	#ctype cyan     connect (z1+0.02) g1
+	#ctype magenta   connect (z2+0.02) g2
+	ctype red   connect z3 g3
+	ctype blue connect z4 g4
+	expand 1.75
+	ctype red relocate 1.7 7
+	putlabel 4 x_e=1
+	ctype blue relocate 2.15 11
+	putlabel 4 x_e=0.2
+	
+	ticksize -1 10 0 0
+	wind 1 -2 1 1
+	limits z4 t4
+	ctype default expand 1.4
+	lweight 2 	bo
+	xlabel z
+	ylabel optical depth \tau
+	lweight 3
+	ctype red connect z3 t3
+	ctype blue connect z4 t4
+	expand 1.75
+	ctype red relocate 1.7 0.45
+	putlabel 4 x_e=1
+	ctype blue relocate 1.85 0.1
+	putlabel 6 x_e=0.2
+	expand 2 ctype default relocate 0.5 0.45
+	putlabel 2 \tau_r=0.5
+	expand 1 ctype default
+	window 1 1 1 1 
+	lweight 1
+	LOCATION 3500 31000 3500 31000
+
+vish_bdm
+	#window 1 1 1 1
+	LOCATION  $($gx1 + 1000) $gx2 $gy1 $gy2
+	define ellcut 6
+	getvish 0 "models/0_1,0,0.5,1,0.0125,5,1.0,0.0/vishniac.out"
+	getvish 1 "models/1_1,0,0.5,1,0.0125,19,0.0,0.1/vishniac.out"
+	getvish 2 "models/2_1,0,0.5,1,0.0125,56,0.0,0.1/vishniac.out"
+	getvish 3 "models/3_1,0,0.5,1,0.0125,56,0.0,0.5/vishniac.out"
+	getvish 4 "models/4_1,0,0.5,1,0.0125,166,0.0,0.5/vishniac.out"
+
+	getvish bd1 "models_bdm/1_0.3,0,0.7,2.85,0.049,800.0,0.1,0.0/vishniac.out"
+	getvish bd2 "models_bdm/2_1,0,0.5,2.85,0.025,800.0,42.3,0.0/vishniac.out"
+	getvish bd3 "models_bdm/3_1,0,0.5,2.85,0.025,800.0,0.1,0.0/vishniac.out"
+	#getvish bd4   "models_bdm/4_0.2,0,0.7,2.05,0.049,800.0,0.1,0.0/vishniac.out"
+	#getvish bd4r "models_bdm/4r_0.2,0,0.7,2.05,0.049,800.0,42.3,0.0/vishniac.out"
+	#getvish bd5 "models_bdm/5_1,0,0.7,2.25,0.0245,800.0,0.1,0.0/vishniac.out"
+	#getvish bd5r "models_bdm/5r_1,0,0.7,2.25,0.0245,800.0,42.3,0.0/vishniac.out"
+	getvish bd4  "models_bdm/4_0.2,0,0.7,2.25,0.0245,800.0,0.1,0.0/vishniac.out"
+	getvish bd4r "models_bdm/4r_0.2,0,0.7,2.25.,0.0245,800.0,42.3,0.0/vishniac.out"
+	getvish bd5  "models_bdm/5_0.4,0,0.7,2.05,0.045,800.0,0.1,0.0/vishniac.out"
+	getvish bd5r "models_bdm/5r_0.4,0,0.7,2.05,0.049,800.0,42.3,0.0/vishniac.out"
+
+	getvish B1 "models_openfix/B1_0.3,0,0.7,1,0.05,0,1.0,0.1/vishniac.out"
+	getvish B2 "models_openfix/B2_0.3,0,0.7,1,0.05,0,0.2,0.1/vishniac.out"
+	getvish B3 "models_openfix/B3_0.3,0,0.7,1,0.05,0,1.0,0.5/vishniac.out"
+	getvish B4 "models_openfix/B4_0.3,0,0.7,1,0.05,0,0.2,0.5/vishniac.out"
+
+	# normalize to cluster abundance
+	define s8dmr 0.30
+	define Om0 0.3
+	define s8clus (0.60*($Om0**(-0.53)))
+	define fac (($s8clus/$s8dmr)**4.0)
+	echo normalization factor=$!fac
+	set clB1=clB1+lg($fac)
+	set clB2=clB2+lg($fac)
+	set clB3=clB3+lg($fac)
+	set clB4=clB4+lg($fac)
+
+	#normalize isocurv models 
+	define s8iso 0.81    ## "target" sigma_8
+	# the number below is the value for sigma_8 calculated for this model 
+	#		(@ end of logfile)
+	set clbd1=clbd1+lg(($s8iso/6.119905e+00)**4.0)
+	set clbd2=clbd2+lg(($s8iso/1.082042e+06)**4.0)
+	set clbd3=clbd3+lg(($s8iso/1.095058e+06)**4.0)
+	#set clbd4 =clbd4+ lg(($s8iso/7.255176e-01)**4.0)
+	#set clbd4r=clbd4r+lg(($s8iso/7.255176e-01)**4.0)
+	#set clbd5 =clbd5+ lg(($s8iso/7.101135e+02)**4.0)
+	#set clbd5r=clbd5r+lg(($s8iso/7.101135e+02)**4.0)
+	define s8iso 0.89
+	set clbd4 =clbd4+ lg(($s8iso/1.099794)**4.0)
+	set clbd4r=clbd4r+lg(($s8iso/1.099794)**4.0)
+	define s8iso 0.82
+	set clbd5 =clbd5+ lg(($s8iso/2.067707)**4.0)
+	set clbd5r=clbd5r+lg(($s8iso/2.067707)**4.0)
+
+	ticksize -1 10 -1 10
+	define l2 $($ellcut + 1.1)
+	limits 1 $l2 -16 -9
+
+	ctype default
+	lweight 2 expand 1.5
+	box 
+	expand 1.5
+	define TeX_strings 1
+	xlabel {\sc l}
+	ylabel {\sc l}^2 C_{\sc l}/(2\pi)
+	lweight 3
+	expand 1.3
+	                           #   x_e  z_r  tau_r
+	ctype default conlab l0 cl0 9 "1     5 0.02"
+	ctype red     conlab l1 cl1 6 "1    19 0.1"
+	ctype green   conlab l2 cl2 3 "0.2  56 0.1"
+	ctype magenta conlab l4 cl4 9 "0.2 166 0.5"
+	ctype blue    conlab l3 cl3 9 "1    56 0.5"
+	ltype 2
+	ctype red     conlab lB1 clB1 9 "1     7 0.1"
+	ctype blue    conlab lB3 clB3 3 "1    20 0.5"
+
+	ltype 3
+	#ctype red     connect lbd1 clbd1
+	#ctype green   connect lbd2 clbd2
+	#ctype magenta connect lbd3 clbd3
+	ltype 1
+	#ctype red     connect lbd1_1 clbd1_1
+	#ctype green   connect lbd2_1 clbd2_1
+	#ctype magenta connect lbd3_1 clbd3_1
+	ctype cyan	connect lbd4 clbd4
+	ctype magenta	connect lbd5 clbd5
+	lweight 5 ltype 2
+	ctype cyan	connect (lbd4r) clbd4r
+	ctype magenta	connect lbd5r clbd5r	
+
+	lweight 3 ltype 0
+	relocate $x -10.4
+	# lweight 1 putlabel 6 "(\Omega_Bh^2=0.05)"
+	lweight 3 ctype default
+	relocate $x -11
+	lweight 2 putlabel 6 "{x_e   z_r   \tau_r}"
+	lweight 3
+	ltype 5
+
+	data stdCDM.Cl
+	read {l 1 ccl 2}
+	ctype default
+	ion l ccl ccl_01 0.1
+	ion l ccl ccl_05 0.5
+	ion l ccl ccl_1 1
+	ion l ccl ccl_2 2
+	connect (lg(l)) (lg(ccl))
+	connect (lg(l)) (lg(ccl_01))
+	connect (lg(l)) (lg(ccl_05))
+	connect (lg(l)) (lg(ccl_1))
+	connect (lg(l)) (lg(ccl_2))
+
+	ltype 0	ctype default lweight 0 ticksize 0 0 0 0
+	LOCATION 3500 31000 3500 31000
+	define doOpen delete
+
+
+
+
+both
+	window 1 2 1 1
+	vish_paper
+	window 1 2 1 2 
+	vis_paper
+
