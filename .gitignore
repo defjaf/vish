@@ -53,3 +53,7 @@ dkms.conf
 
 models*
 .smhist
+vish
+vish_gauss
+vish_approx
+vish_p
