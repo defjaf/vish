@@ -41,7 +41,7 @@ vish_gauss: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS  $(LDFLAGS) -o $@
 
 vish: vish.c nrlib.a
-	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS  nrlib.a $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
 
 vish_approx: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib. a-DUSE_S_APPROX  $(LDFLAGS) -o $@
@@ -50,4 +50,4 @@ vish_p: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a $(LDFLAGS) -o $@
 
 clean:
-	-rm -f vish vish_gauss vish_approx vish_p nrlib.a 
+	-rm -f vish vish_gauss vish_approx vish_p nrlib.a
