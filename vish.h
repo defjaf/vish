@@ -1,8 +1,8 @@
 double tau_integrand(double z);
 double x_e(double z);
 double tau(double z);
-double lngfun(double z, double z_m, double x0, double xbar, double alpha); 
-double gfun(double z, double z_m, double x0, double xbar, double alpha); 
+double lngfun(double z, double z_m, double x0, double xbar, double alpha);
+double gfun(double z, double z_m, double x0, double xbar, double alpha);
 double p_proj(double kappa);
 double Pintegrand(double y);   /* y=eta/eta_0 */
 double Pintegrand_1(double y); /* y=eta/eta_0 */
@@ -36,3 +36,4 @@ void gauleg(double, double, double *, double *, int);
 int read_xe(FILE *xefile, double *xe_z_array, double *xe_2_array,
                int narrin);
 double Pkwindow(double kp);
+double *vector(int, int);

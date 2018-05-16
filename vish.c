@@ -57,14 +57,14 @@ for this model, we use
 #include <stdlib.h>
 #include <math.h>
 #include "vish.h"
-#include "nrutil.c"
-#include "qromb.c"
-#include "qgaus.c"
-#include "gauleg.c"
-#include "trapzd.c"
-#include "polint.c"
-#include "splint.c"
-#include "spline.c"
+// #include "nrutil.c"
+// #include "qromb.c"
+// #include "qgaus.c"
+// #include "gauleg.c"
+// #include "trapzd.c"
+// #include "polint.c"
+// #include "splint.c"
+// #include "spline.c"
 
 #define ZMAX 1100        /* surface of last scattering, more or less */
 #define DELZT 0.25       /* tau(z), g(z) calculated with this interval */

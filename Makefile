@@ -37,11 +37,17 @@ vishniac: vishniac.c nrlib.a
 lint: vish.c
 	lint $(LINTFLAGS) vish.c
 
-vish_gauss: vish.c
-	$(CC) $(CFLAGS) vish.c -DDO_GAUSS  $(LDFLAGS) -o $@
+vish_gauss: vish.c nrlib.a
+	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS  $(LDFLAGS) -o $@
 
-vish_approx: vish.c
-	$(CC) $(CFLAGS) vish.c -DUSE_S_APPROX  $(LDFLAGS) -o $@
+vish: vish.c nrlib.a
+	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS  nrlib.a $(LDFLAGS) -o $@
 
-vish_p: vish.c
-	$(CC) $(CFLAGS) vish.c $(LDFLAGS) -o $@
+vish_approx: vish.c nrlib.a
+	$(CC) $(CFLAGS) vish.c nrlib. a-DUSE_S_APPROX  $(LDFLAGS) -o $@
+
+vish_p: vish.c nrlib.a
+	$(CC) $(CFLAGS) vish.c nrlib.a $(LDFLAGS) -o $@
+
+clean:
+	-rm -f vish vish_gauss vish_approx vish_p nrlib.a 
