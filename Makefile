@@ -18,9 +18,9 @@ LINTFLAGS = -lm -x -I. -I$(nrdir)
 # nb VPATH forces searches in these directories...
 VPATH = $(nrdir)
 
-nrfil = nrutil.c qromb.c trapzd.c polint.c  chebev.c \
+nrfil = nrutil.c qromb.c trapzd.c polint.c chebev.c \
 	spline.c splint.c gauleg.c
-nrobs = nrutil.o qromb.o trapzd.o polint.o  chebev.o \
+nrobs = nrutil.o qromb.o trapzd.o polint.o chebev.o \
 	spline.o splint.o gauleg.o
 hfil = nr.h nrutil.h
 
@@ -38,13 +38,13 @@ lint: vish.c
 	lint $(LINTFLAGS) vish.c
 
 vish_gauss: vish.c nrlib.a
-	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS  $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
 
 vish: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
 
 vish_approx: vish.c nrlib.a
-	$(CC) $(CFLAGS) vish.c nrlib. a-DUSE_S_APPROX  $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) vish.c nrlib.a -DUSE_S_APPROX $(LDFLAGS) -o $@
 
 vish_p: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a $(LDFLAGS) -o $@
