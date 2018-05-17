@@ -49,5 +49,8 @@ vish_approx: vish.c nrlib.a
 vish_p: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a $(LDFLAGS) -o $@
 
+vish_sing: vish.c nrlib.a
+	$(CC) $(CFLAGS) vish.c nrlib.a -DSQRT_SING $(LDFLAGS) -o $@
+
 clean:
 	-rm -f vish vish_gauss vish_approx vish_p nrlib.a
