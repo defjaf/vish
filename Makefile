@@ -31,7 +31,7 @@ hfil = nr.h nrutil.h
 ## default target
 ## plain vanilla version with flags as specified in the code
 vish: vish.c nrlib.a
-	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) vish.c nrlib.a $(LDFLAGS) -o $@
 
 lint: vish.c
 	lint $(LINTFLAGS) vish.c
