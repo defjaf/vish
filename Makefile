@@ -24,23 +24,19 @@ nrobs = nrutil.o qromb.o trapzd.o polint.o chebev.o \
 	spline.o splint.o gauleg.o
 hfil = nr.h nrutil.h
 
-nrlib.a: $(nrfil)
-#	force nrobs to get made (default rules...)
-	make $(nrobs)
-	ar cr $@ $(nrobs)
-	ranlib $@
-	-rm $(nrobs)
+# not even sure what target this is
+# vishniac: vishniac.c nrlib.a
+# 	$(CC) $(CFLAGS) vishniac.c nrlib.a $(LDFLAGS) -o $@
 
-vishniac: vishniac.c nrlib.a
-	$(CC) $(CFLAGS) vishniac.c nrlib.a $(LDFLAGS) -o $@
+## default target
+## plain vanilla version with flags as specified in the code
+vish: vish.c nrlib.a
+	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
 
 lint: vish.c
 	lint $(LINTFLAGS) vish.c
 
 vish_gauss: vish.c nrlib.a
-	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
-
-vish: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a -DDO_GAUSS $(LDFLAGS) -o $@
 
 vish_approx: vish.c nrlib.a
@@ -51,6 +47,13 @@ vish_p: vish.c nrlib.a
 
 vish_sing: vish.c nrlib.a
 	$(CC) $(CFLAGS) vish.c nrlib.a -DSQRT_SING $(LDFLAGS) -o $@
+
+nrlib.a: $(nrfil)
+#	force nrobs to get made (default rules...)
+	make $(nrobs)
+	ar cr $@ $(nrobs)
+	ranlib $@
+	-rm $(nrobs)
 
 clean:
 	-rm -f vish vish_gauss vish_approx vish_p nrlib.a
